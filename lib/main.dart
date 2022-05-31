@@ -1,3 +1,4 @@
+import 'package:chat_app/provider/update_error_message.dart';
 import 'package:chat_app/widget_tree.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       ),
       home: MultiProvider(
         providers: [
+          ChangeNotifierProvider(create: (context) => ErrorMessage()),
           StreamProvider<User?>(
               create: (context) => FirebaseAuth.instance.authStateChanges(),
               initialData: null)

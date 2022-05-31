@@ -1,5 +1,7 @@
+import 'package:chat_app/provider/update_error_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../methods/auth.dart';
 
@@ -14,17 +16,13 @@ class _LogInScreenState extends State<LogInScreen> {
   TextEditingController emailController = TextEditingController();
 
   TextEditingController passwordController = TextEditingController();
-  String errorMessage = '';
+
   Future<void> signIn() async {
     try {
       await Auth().signInWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
-      setState(
-        () {
-          errorMessage = e.message ?? '';
-        },
-      );
+      Provider.of<ErrorMessage>(context, listen: false).newError(e.message!);
     }
   }
 
@@ -33,11 +31,7 @@ class _LogInScreenState extends State<LogInScreen> {
       await Auth().createUserWithEmailAndPassword(
           email: emailController.text, password: passwordController.text);
     } on FirebaseAuthException catch (e) {
-      setState(
-        () {
-          errorMessage = e.message ?? '';
-        },
-      );
+      Provider.of<ErrorMessage>(context, listen: false).newError(e.message!);
     }
   }
 
@@ -45,11 +39,7 @@ class _LogInScreenState extends State<LogInScreen> {
     try {
       await Auth().sendPasswordResetWithEmail(email: emailController.text);
     } on FirebaseAuthException catch (e) {
-      setState(
-        () {
-          errorMessage = e.message ?? '';
-        },
-      );
+      Provider.of<ErrorMessage>(context, listen: false).newError(e.message!);
     }
   }
 
@@ -107,6 +97,11 @@ class _LogInScreenState extends State<LogInScreen> {
                   resetPassword();
                 },
                 child: const Text('Forgot Password'),
+              ),
+              Consumer<ErrorMessage>(
+                builder: (context, value, child) => Text(
+                  value.errorMessage,
+                ),
               ),
             ],
           ),
